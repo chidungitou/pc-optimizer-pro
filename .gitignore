@@ -1,0 +1,8 @@
+__pycache__/
+build/
+dist/
+Microsoft/
+app.ico
+build_info.py
+test_result.txt
+*.zip
