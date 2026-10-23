@@ -1,0 +1,67 @@
+name: Build exe & Release
+
+# Chạy khi: (1) bạn đẩy tag dạng v2.7  (2) tạo Release mới trên web (cũng tạo tag)  (3) bấm tay "Run workflow".
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write        # cần để đính file .exe vào Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      # Chặn phát hành nhầm: tag v2.7 mà APP_VERSION trong code vẫn là 2.6 thì báo đỏ, KHÔNG tạo Release.
+      - name: Kiem tra tag khop APP_VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: python
+        run: |
+          import os, re, sys
+          ver = re.search(r'APP_VERSION = "([^"]+)"', open("pc_optimizer.py", encoding="utf-8").read()).group(1)
+          tag = os.environ["GITHUB_REF_NAME"].lstrip("vV")
+          if ver != tag:
+              sys.exit(f"LOI: tag v{tag} khong khop APP_VERSION = {ver} trong pc_optimizer.py. Sua APP_VERSION, commit, roi tao lai tag.")
+          print("OK: tag khop phien ban", ver)
+
+      - run: python -m pip install -r requirements.txt pyinstaller
+
+      - name: Kiem thu logic
+        run: python test_pc_optimizer.py
+        continue-on-error: true      # test giao dien can man hinh that; loi o day khong chan viec build
+
+      # Ghi thoi diem build + ten kho (GITHUB_REPOSITORY tu dong co san) de app biet kiem tra ban moi o dau.
+      - name: Tao build_info.py
+        run: python make_build_info.py
+
+      - run: python -c "import pc_optimizer as p; p.make_icon_image(256).save('app.ico', sizes=[(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)])"
+
+      - run: python -m PyInstaller --noconfirm --clean --onefile --noconsole --uac-admin --name PCOptimizerPro --icon app.ico --collect-all customtkinter --hidden-import pystray._win32 pc_optimizer.py
+
+      - name: Tinh SHA256
+        shell: pwsh
+        run: |
+          $h = (Get-FileHash dist/PCOptimizerPro.exe -Algorithm SHA256).Hash.ToLower()
+          "$h  PCOptimizerPro.exe" | Out-File -Encoding ascii dist/PCOptimizerPro.exe.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PCOptimizerPro
+          path: |
+            dist/PCOptimizerPro.exe
+            dist/PCOptimizerPro.exe.sha256
+
+      # Chi chay khi co tag v*: tao (hoac cap nhat) Release cung ten tag va dinh file .exe vao do.
+      - name: Dinh file vao Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/PCOptimizerPro.exe
+            dist/PCOptimizerPro.exe.sha256
