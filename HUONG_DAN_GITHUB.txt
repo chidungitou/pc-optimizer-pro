@@ -1,0 +1,116 @@
+﻿HƯỚNG DẪN PHÁT HÀNH BẢN MỚI TRÊN GITHUB (để app tự báo "Có bản mới")
+==========================================================================
+
+CÁCH HOẠT ĐỘNG (đọc 30 giây là hiểu)
+  1. Bạn tạo một "Release" trên GitHub, đặt tên tag là v2.7 (chữ v + số phiên bản).
+  2. GitHub Actions tự build file PCOptimizerPro.exe rồi đính vào Release đó (khoảng 3–6 phút).
+  3. App của người dùng hỏi GitHub "bản mới nhất là gì?". Nếu số lớn hơn bản đang chạy -> hiện banner
+     "🎉 Có bản mới" ở màn hình Tổng quan, bấm "Tải về" là tải file .exe.
+  App chỉ ĐỌC thông tin phát hành, không tự tải hay tự cài gì. Không cần token hay mật khẩu GitHub.
+
+
+PHẦN 1 — LÀM MỘT LẦN DUY NHẤT
+-----------------------------
+1.1  Tạo kho (repository)
+     - Đăng nhập github.com -> bấm dấu "+" góc trên bên phải -> New repository.
+     - Repository name: ví dụ  pc-optimizer-pro
+     - Chọn **Public**   <-- BẮT BUỘC. Kho Private thì app không đọc được (báo lỗi 404).
+     - Bấm Create repository.
+     - Ghi nhớ chuỗi  TÊN-TÀI-KHOẢN/pc-optimizer-pro  (ví dụ nguyenvana/pc-optimizer-pro).
+
+1.2  Đưa mã nguồn lên
+     - Trong kho vừa tạo bấm "uploading an existing file".
+     - Kéo thả các file sau vào: pc_optimizer.py, hardware_info.py, test_pc_optimizer.py, requirements.txt,
+       make_build_info.py, build_exe.bat, PCOptimizerPro.spec, README_BUILD.txt, CHANGES.txt, HUONG_DAN_GITHUB.txt
+       (KHÔNG cần: build_info.py, test_result.txt, thư mục build/ dist/).
+     - Kéo xuống bấm "Commit changes".
+
+1.3  Thêm file workflow (phải đúng đường dẫn, sai chỗ là GitHub không chạy)
+     - Trong kho: Add file -> Create new file.
+     - Ở ô tên file gõ đúng:   .github/workflows/build.yml
+       (khi gõ dấu "/" GitHub tự tạo thư mục).
+     - Mở file build.yml trong gói zip bằng Notepad, chép TOÀN BỘ nội dung, dán vào khung soạn thảo.
+     - Bấm "Commit changes".
+     - Nếu lúc 1.2 bạn đã lỡ upload một file build.yml ở thư mục gốc của kho: mở nó -> nút "..." -> Delete file -> Commit.
+
+1.4  Cho phép workflow đính file vào Release
+     - Kho -> Settings -> Actions -> General -> kéo xuống "Workflow permissions"
+       -> chọn "Read and write permissions" -> Save.
+     - Mở tab Actions: nếu thấy nút "I understand my workflows, go ahead and enable them" thì bấm vào.
+
+(Tùy chọn) Build ngay trên máy bằng build_exe.bat vẫn dùng được. Khi đó tạo thêm file  update_repo.txt  cùng thư mục
+với build_exe.bat, bên trong ghi đúng 1 dòng:   TÊN-TÀI-KHOẢN/pc-optimizer-pro
+Build bằng GitHub Actions thì KHÔNG cần file này, tên kho được điền tự động.
+
+
+PHẦN 2 — PHÁT HÀNH MỘT BẢN (làm mỗi lần ra bản mới)
+----------------------------------------------------
+Bước 1. Đặt số phiên bản trong code
+     - Mở pc_optimizer.py trên GitHub -> biểu tượng cây bút (Edit) -> tìm dòng   APP_VERSION = "2.6"
+     - Sửa thành số mới, ví dụ "2.7" -> Commit changes.
+     - Lần đầu tiên (bản 2.6 này) đã đúng sẵn, không cần sửa.
+
+Bước 2. Tạo Release
+     CÁCH A — không cần cài git (dễ nhất):
+     - Trang chính của kho -> cột bên phải mục "Releases" -> "Create a new release".
+     - Ô "Choose a tag": gõ   v2.7   (chữ v + đúng số APP_VERSION) -> chọn dòng "Create new tag: v2.7 on publish".
+     - Release title: v2.7
+     - Khung mô tả: ghi vài dòng "bản này có gì mới" (người dùng bấm "Xem thay đổi" trong app sẽ đọc được).
+     - KHÔNG tick "Set as a pre-release" (bản pre-release/nháp app sẽ không thấy).
+     - Bấm "Publish release".
+
+     CÁCH B — nếu bạn dùng git trên máy:
+         git add -A
+         git commit -m "v2.7"
+         git tag v2.7
+         git push origin main --tags
+       Workflow tự tạo Release. Sau đó vào Releases -> Edit để viết mô tả.
+
+Bước 3. Chờ build (3–6 phút)
+     - Tab Actions -> dòng mới nhất "Build exe & Release":
+         vòng tròn vàng = đang chạy  |  dấu ✔ xanh = xong  |  dấu ✖ đỏ = lỗi (bấm vào xem log, xem Phần 4)
+     - Xong thì trang Release có mục Assets với 2 file:
+         PCOptimizerPro.exe   và   PCOptimizerPro.exe.sha256
+     - Lưu ý: ở CÁCH A, Release hiện công khai ngay nhưng file .exe chỉ xuất hiện sau khi build xong.
+       Trong khoảng đó nếu người dùng bấm "Tải về", app sẽ mở trang Release (chưa có file) — đợi vài phút là có.
+
+Bước 4. Thử xem app có báo không
+     - Mở app bản cũ (ví dụ 2.6) -> Cài đặt & Lịch -> mục "Cập nhật" -> "Kiểm tra ngay".
+     - Phải thấy "Có bản mới v2.7", và banner xanh ở màn hình Tổng quan.
+     - Mẹo thử lần đầu: phát hành 2.6 trước, rồi phát hành thêm 2.7; mở bản 2.6 sẽ thấy banner.
+
+
+PHẦN 3 — NGƯỜI DÙNG CẬP NHẬT NHƯ THẾ NÀO
+----------------------------------------
+  1. Banner ở Tổng quan -> "⬇ Tải về" (trình duyệt tải PCOptimizerPro.exe).
+  2. Thoát app hoàn toàn (chuột phải biểu tượng ở khay hệ thống -> Thoát).
+  3. Chép file mới ĐÈ lên file cũ, cùng thư mục, rồi mở lại.
+  Cấu hình, danh sách bảo vệ, lịch sử nằm ở %LOCALAPPDATA%\PCOptimizerPro nên được giữ nguyên.
+  Nếu để file mới ở chỗ khác: vào Cài đặt bấm "Áp dụng lịch" và bật lại "Khởi động cùng Windows"
+  (các tác vụ đó nhớ đường dẫn của file exe cũ).
+  Kiểm tra file tải về không bị sửa: mở CMD chạy   certutil -hashfile PCOptimizerPro.exe SHA256
+  rồi so với nội dung file PCOptimizerPro.exe.sha256.
+
+
+PHẦN 4 — LỖI THƯỜNG GẶP
+-----------------------
+| Hiện tượng                                          | Nguyên nhân / cách xử lý                                                    |
+|-----------------------------------------------------|-----------------------------------------------------------------------------|
+| App báo "Không thấy bản phát hành... Private"       | Kho đang Private (Settings -> cuộn cuối -> Change visibility -> Public),    |
+|                                                     | hoặc chưa tạo Release nào, hoặc tên kho sai.                                |
+| App báo "Chưa cấu hình kho GitHub"                  | Build tại máy mà thiếu update_repo.txt. Tạo file đó rồi build lại.          |
+| Tab Actions trống, không chạy gì                    | File workflow sai chỗ. Phải đúng  .github/workflows/build.yml  (Mục 1.3).   |
+| Actions đỏ ở bước "Kiem tra tag khop APP_VERSION"   | Tag (v2.7) khác APP_VERSION trong code. Sửa APP_VERSION cho khớp, commit,   |
+|                                                     | xóa Release + tag sai (Releases -> Delete, Tags -> Delete) rồi tạo lại.     |
+| Actions đỏ ở bước "Dinh file vao Release"           | Chưa làm Mục 1.4 (quyền Read and write). Làm xong bấm "Re-run all jobs".    |
+| Release có nhưng không có file .exe                 | Build chưa xong hoặc bị lỗi: xem tab Actions.                               |
+| App báo "GitHub tạm giới hạn..."                    | GitHub cho tối đa 60 lượt hỏi/giờ cho mỗi địa chỉ IP (mạng công ty dùng     |
+|                                                     | chung IP dễ gặp). Đợi một lát rồi thử lại.                                  |
+| App không báo dù đã có bản mới                      | Bản mới phải là Release thường (không Draft, không Pre-release) và số       |
+|                                                     | phiên bản phải LỚN HƠN bản đang chạy. Hoặc bạn đã bấm "Bỏ qua bản này".     |
+| Windows SmartScreen cảnh báo file mới tải           | Bình thường với file chưa ký số: "Thông tin thêm" -> "Vẫn chạy".            |
+
+GHI CHÚ QUAN TRỌNG
+  - Người đang dùng bản cũ (trước 2.6) chưa có tính năng này nên phải tự cài bản 2.6 một lần; từ đó về sau app tự báo.
+  - Kiểm tra tự động chạy khi mở app và mỗi 24 giờ nếu app chạy nền trong khay (tắt được ở Cài đặt -> Cập nhật).
+  - Quy ước đặt số: 2.6 -> 2.7 (tính năng mới), 2.6 -> 2.6.1 (sửa lỗi nhỏ). App so sánh theo số, nên 2.10 mới hơn 2.9.

@@ -1,0 +1,93 @@
+CAP NHAT v2.6: TU KIEM TRA BAN MOI QUA GITHUB RELEASES
+===========================================================================
+File (chep de len file cu, cung thu muc):
+  - pc_optimizer.py, test_pc_optimizer.py, make_build_info.py, README_BUILD.txt, CHANGES.txt
+  - HUONG_DAN_GITHUB.txt (MOI)  <-- huong dan tung buoc phai lam tren GitHub
+  - .github/workflows/build.yml (MOI, thay cho build.yml cu o thu muc goc; xoa file build.yml cu di)
+Khong can sua build_exe.bat / requirements.txt / hardware_info.py.
+
+  App
+    - Khi mo app (va moi 24 gio neu app chay nen trong khay) tu hoi GitHub ban phat hanh moi nhat. Chay o luong nen, khong lam dung giao dien.
+      Loi mang -> im lang, 1 gio sau thu lai. Chi DOC thong tin, khong tu tai hay tu cai gi, khong can token.
+    - Co ban moi: banner o man hinh Tong quan (so phien ban, ngay phat hanh, dung luong) voi 3 nut:
+      "Tai ve" (mo trinh duyet tai file .exe), "Xem thay doi" (mo trang Release), "Bo qua ban nay".
+      Dong thoi ghi nhat ky va hien thong bao o khay (1 lan cho moi ban).
+    - Cai dat & Lich > muc "Cap nhat": cong tat tu kiem tra, nut "Kiem tra ngay", dong trang thai + gio kiem tra cuoi.
+    - So sanh theo so (2.10 moi hon 2.9; 2.6.0 = 2.6). Chi mo lien ket bat dau bang https://github.com/.
+    - Kho GitHub duoc app biet qua build_info.py: GitHub Actions tu dien; build tai may doc tu file update_repo.txt
+      (1 dong: ten-tai-khoan/ten-kho). Chua cau hinh -> app khong goi mang, nut "Kiem tra ngay" bao cach cau hinh.
+  GitHub
+    - build.yml moi: khi co tag v* (hoac tao Release tren web) -> kiem tra tag khop APP_VERSION -> chay test -> build exe
+      -> tinh SHA256 -> tao/cap nhat Release va dinh PCOptimizerPro.exe + .sha256. Tag lech phien ban thi bao do, khong tao Release.
+  Test: them 5 test (so sanh phien ban, doc JSON release, goi may chu HTTP gia lap GitHub, luong banner/bo qua/loi) -> tong 51 test
+        (34 logic chay OK, 17 giao dien chay tren Windows).
+
+--------------------------------------------------------------------------------------------------
+CAP NHAT v2.5: CHU THICH (TOOLTIP) KHI RE CHUOT VAO MOI NUT
+===========================================================================
+File (chep de len file cu, cung thu muc): pc_optimizer.py, test_pc_optimizer.py, CHANGES.txt
+Khong can sua build_exe.bat / requirements.txt / hardware_info.py. Chay lai build_exe.bat nhu cu.
+
+  - Re chuot ~0,4 giay vao nut / cong tac / o tick / o nhap / o chon -> hien khung giai thich: nut lam gi, khi nao nen dung,
+    co nguy hiem hay can quyen Admin khong, mat bao lau (SFC, DISM...). Roi chuot hoac bam thi tu an, khong nhap nhay.
+  - Phu toan bo app: Tong quan, Don rac (tung muc don co giai thich rieng: an toan khong, anh huong gi), Ung dung nen,
+    Mang & DNS, Cong cu, Cai dat, thanh ben (muc menu, Che do thu, giao dien, trang thai Admin), nhat ky, hop thoai xem truoc
+    (re vao dong de xem day du duong dan).
+  - Che do thu: chu thich ghi ro ap dung cho thao tac nao (don rac, dong app, gan DNS, xoa file lon, go khoi dong)
+    va thao tac nao van chay that (lenh mang, SFC/DISM...).
+  - Khi mo app, nhat ky co dong goi y: "Re chuot vao bat ky nut nao de xem giai thich".
+  - Noi dung giai thich nam o dau file pc_optimizer.py (HINTS, TARGET_HELP, SWITCH_HELP, NAV_HINT) de de chinh sua.
+  - Them 1 test bao dam moi muc don / moi trang deu co giai thich -> tong 47 test (31 logic chay OK, 16 giao dien chay tren Windows).
+
+--------------------------------------------------------------------------------------------------
+CAP NHAT v2.4: NANG CAP GIAO DIEN (dep hon, ro rang hon, chuyen nghiep hon)
+===========================================================================
+File (chep de len file cu, cung thu muc):
+  - pc_optimizer.py        (SUA)  giao dien moi (xem ben duoi), logic don dep KHONG doi
+  - test_pc_optimizer.py   (SUA)  them 3 test cho phan moi -> tong 46 test
+  - CHANGES.txt            (SUA)  file nay
+Khong can sua build_exe.bat / requirements.txt / hardware_info.py. Chay lai build_exe.bat nhu cu.
+
+CHINH THAY DOI
+  Tong the
+    - Bang mau thong nhat (xanh chu dao, xanh la / vang / do cho trang thai), font Segoe UI, the (card) bo goc co vien manh.
+    - 6 kieu nut: chinh (xanh), phu (xam), nguy hiem (do), thanh cong (xanh la), canh bao (cam), mo (ghost).
+      Hanh dong xoa luon mau do, hanh dong an toan mau xanh -> nhin la biet nut nao nguy hiem.
+    - O tick / cong tat / thanh tien trinh / o nhap cung bo mau chung; che do Sang va Toi deu dep.
+    - Icon cua so + icon khay + icon exe moi (nen xanh bo goc + tia set, net muot).
+  Khung chinh
+    - Thanh ben: logo + ten, muc dang chon co vach sang ben trai, the "Che do thu", the chon giao dien (Toi/Sang/Theo he thong),
+      the trang thai quyen Admin. Van con dong "v2.4  Build: <gio>" o goc duoi ben trai.
+    - Moi trang co tieu de + dong mo ta o tren cung; goc phai co chip trang thai "San sang" / "Dang xu ly...".
+    - Nut "Huy tac vu" chi hien khi dang chay tac vu.
+    - Nhat ky: dong co mau (xanh = thanh cong, do = loi, vang = canh bao, xanh duong = dang chay), gio mo hon,
+      nut Xoa / An-Hien / Mo thu muc log, tu cat bot khi qua 1500 dong.
+  Tong quan
+    - 3 the lon CPU / RAM / O dia: so % lon, thanh tien trinh doi mau theo muc (<70% xanh, <90% vang, con lai do),
+      ghi them so luong, dung luong con trong.
+    - The phan cung: vach mau ben trai theo muc (xanh/vang/do), icon trong o bo goc, nhan trang thai dang vien thuoc,
+      cot gia tri tu xuong dong theo do rong cua so (khong con bi cat chu khi thu nho cua so).
+    - Thao tac nhanh: 4 nut deu nhau + dong giai thich "khong dung toi Downloads".
+  Don rac
+    - Chia nhom: HE THONG WINDOWS / TRINH DUYET / VUNG NGUY HIEM (Downloads to nen do, vien do).
+    - Moi muc 1 the: o tick, ghi chu, thanh so sanh dung luong tuong doi, dung luong (>=500 MB vang, >=1 GB do).
+    - Dong tom tat: "Da chon N muc - co the giai phong ~ X" cap nhat ngay khi tick / bo tick.
+    - Hop thoai xem truoc: dau hop thoai co tong ket, the canh bao Downloads, chip "CHE DO THU",
+      moi dong gom loai > duong dan rut gon (...) + dung luong can phai, nut Don / Huy luon nam sat day.
+  Cac trang khac
+    - Ung dung nen: thanh tim kiem (loc sau khi go xong, khong giat), dung luong RAM can phai, vang/do theo muc,
+      dong tong "Hien thi N ung dung - tong RAM".
+    - Mang & DNS, Cong cu: tung muc la 1 the co mo ta; trang Cong cu cuon duoc nen khong con bi cat o cua so nho.
+    - Cai dat & Lich: cong tat thay cho o tick, tieu de + mo ta tung muc, nhan Che do / Ngay / Gio ro rang.
+
+LUU Y KIEM TRA
+  Khi mo exe moi phai thay: thanh ben toi co logo tia set, 3 the CPU/RAM/O dia o Tong quan, chip "San sang" o goc tren ben phai.
+  Neu van thay giao dien cu = dang mo nham exe cu (xem muc "NEU VAN RA BAN CU" trong CHANGES v2.3: thoat app o khay roi mo lai).
+  Test: phan logic (30 test) da chay OK. 16 test giao dien chi chay duoc tren Windows -> build_exe.bat tu chay, xem test_result.txt.
+
+--------------------------------------------------------------------------------------------------
+CAP NHAT v2.3: SUA LOI "BUILD XONG NHUNG MO RA BAN CU"
+  - build_exe.bat tu dong dong ban dang chay, don build/dist cu, kiem tra file exe moi
+  - make_build_info.py tao dau thoi gian build; pc_optimizer.py hien "v2.3 / Build: <gio>" o goc duoi ben trai
+  - Neu van ra ban cu: ket thuc moi PCOptimizerPro.exe trong Task Manager; xoa task PCOptimizerPro_Tray / PCOptimizerPro_AutoClean
+    neu tro toi exe cu; chay lai build_exe.bat va mo DUNG file in ra o muc "File moi vua tao".
